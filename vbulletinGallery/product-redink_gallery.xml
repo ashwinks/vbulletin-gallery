@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<product productid="redink_gallery" active="1">
+	<title>RedInk Design - Gallery</title>
+	<description />
+	<version>0.1</version>
+	<url>http://www.vbulletin.org/forum/showthread.php?t=295148</url>
+	<versioncheckurl />
+	<dependencies>
+	</dependencies>
+	<codes>
+		<code version="*">
+			<installcode><![CDATA[if ($vbulletin->products['navmanager_enhancements'])
+{
+	$nmea = new NavmanEnhancements_Admin();
+	$nmea->importAttributes($arr['navigation']);
+}]]></installcode>
+			<uninstallcode />
+		</code>
+	</codes>
+	<templates>
+		<template name="redink_gallery_page" templatetype="template" date="1360795101" username="ash" version="0.1"><![CDATA[{vb:stylevar htmldoctype}
+<html xmlns="http://www.w3.org/1999/xhtml" dir="{vb:stylevar textdirection}" lang="{vb:stylevar languagecode}" id="vbulletin_html">
+<head>
+<title>{vb:raw vboptions.bbtitle} - {vb:raw pagetitle}</title>
+	{vb:raw headinclude}
+	{vb:raw headinclude_bottom}
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="{vb:raw vboptions.bburl}/redinkdesign/gallery/clientscript/jquery.imagesloaded.min.js" type="text/javascript"></script>
+<script src="{vb:raw vboptions.bburl}/redinkdesign/gallery/clientscript/jquery.masonry.min.js" type="text/javascript"></script>
+<script src="{vb:raw vboptions.bburl}/redinkdesign/gallery/clientscript/gallery.js" type="text/javascript"></script>
+<link rel="stylesheet" href="{vb:raw vboptions.bburl}/redinkdesign/gallery/css/style.css" type="text/css" media="all" />
+<script type="text/javascript">
+var REDINK_GALLERY_PERPAGE = {vb:raw perpage};
+</script>
+</head>
+<body>
+{vb:raw header}
+
+{vb:raw navbar}
+<div id="overall-wrapper">
+    <div class="block">
+        <h2 class="blockhead">Latest Gallery Images</h2>
+        <div class="blockbody">
+            <div class="blockrow pagination">{vb:raw pagenav}</div>
+            <div id="loading" class="blockrow">Loading...</div>
+            <div id="gallery-container" class="blockbody">
+                {vb:raw picturebits}
+            </div>
+           <div class="blockrow pagination">{vb:raw pagenav}</div>
+        </div>
+     </div>
+</div>
+{vb:raw footer}
+</body>
+</html>]]></template>
+		<template name="redink_gallery_picture_bit" templatetype="template" date="1360818627" username="ash" version="0.1"><![CDATA[<div class="image-item" id="image-item-wrapper-{vb:raw picture.attachmentid}"><a title="{vb:raw picture.title} - By {vb:raw picture.username}" href="album.php?{vb:raw session.sessionurl}albumid={vb:raw picture.albumid}&attachmentid={vb:raw picture.attachmentid}" id="image-item-{vb:raw picture.attachmentid}"><img src="{vb:raw picture.image_url}" border="0" alt="{vb:raw picture.title} - By {vb:raw picture.username}" title="{vb:raw picture.title} - By {vb:raw picture.username}" /></a></div>]]></template>
+	</templates>
+	<stylevardfns>
+	</stylevardfns>
+	<stylevars>
+	</stylevars>
+	<plugins>
+		<plugin active="1" executionorder="5">
+			<title>Location Process</title>
+			<hookname>online_location_process</hookname>
+			<phpcode><![CDATA[if (strpos($filename, 'red_gallery') !== false)
+{
+	$userinfo['activity'] = 'red_gallery';
+}]]></phpcode>
+		</plugin>
+		<plugin active="1" executionorder="5">
+			<title>Location Info</title>
+			<hookname>online_location_unknown</hookname>
+			<phpcode><![CDATA[if ($userinfo['activity'] == 'red_gallery')
+{
+	$userinfo['action'] = construct_phrase($vbphrase['viewing_x'],'Gallery');
+	$handled = true;
+}]]></phpcode>
+		</plugin>
+		<plugin active="1" executionorder="5">
+			<title>template_groups</title>
+			<hookname>template_groups</hookname>
+			<phpcode><![CDATA[require(DIR . '/redinkdesign/gallery/hooks/template_groups.php');]]></phpcode>
+		</plugin>
+	</plugins>
+	<phrases>
+		<phrasetype name="vBulletin Settings" fieldname="vbsettings">
+			<phrase name="setting_reg_gallery_enable_cache_desc" date="1360878529" username="ash" version="1"><![CDATA[Enabling caching will create a resized picture and store it in a cache folder. 
+<br /><br />
+If caching is disabled, images will be served directly from vBulletins attachment script, which means they will be full sized images that are sized down using CSS. The view counter will also be increased for each image.
+<br /><br />
+Please make sure the '/redinkdesign/gallery/cache' folder is writeable (chmod 777)]]></phrase>
+			<phrase name="setting_reg_gallery_enable_cache_title" date="1360878529" username="ash" version="1"><![CDATA[Enable Caching]]></phrase>
+			<phrase name="setting_reg_gallery_enable_desc" date="1360874325" username="ash" version="1"><![CDATA[Enable the Gallery?]]></phrase>
+			<phrase name="setting_reg_gallery_enable_title" date="1360874325" username="ash" version="1"><![CDATA[Enable Gallery]]></phrase>
+			<phrase name="setting_reg_gallery_image_serving_desc" date="1360875433" username="ash" version="1"><![CDATA[If you would like to load the gallery images directly from the file system, chose "File System". If you chose File System or CDN, users can potentially find out exactly where the cached images are stored, and can link to them directly.
+<br /><br />
+If you use the script option, the path to the cached images are hidden, but will add additional load on the server.
+<br /><br />
+If you chose CDN, please enter you CDN domain below.]]></phrase>
+			<phrase name="setting_reg_gallery_image_serving_title" date="1360875433" username="ash" version="1"><![CDATA[Image Serving]]></phrase>
+			<phrase name="setting_reg_gallery_images_per_page_desc" date="1360874325" username="ash" version="1"><![CDATA[The amount of gallery images to display per page]]></phrase>
+			<phrase name="setting_reg_gallery_images_per_page_title" date="1360874325" username="ash" version="1"><![CDATA[Images per page]]></phrase>
+			<phrase name="setting_reg_gallery_use_cdn_desc" date="1360878280" username="ash" version="1"><![CDATA[Fill in your CDN url's each on a new line
+<br />
+eg. <br />
+http://static.yoursite.com<br />
+http://static2.yoursite.com<br />
+http://static3.yoursite.com<br />]]></phrase>
+			<phrase name="setting_reg_gallery_use_cdn_title" date="1360878280" username="ash" version="1"><![CDATA[Use CDN URL]]></phrase>
+			<phrase name="settinggroup_redinkdesign_gallery" date="1360874325" username="ash" version="1"><![CDATA[RedInkDesign - Gallery]]></phrase>
+		</phrasetype>
+	</phrases>
+	<options>
+		<settinggroup name="redinkdesign_gallery" displayorder="65535">
+			<setting varname="reg_gallery_enable" displayorder="1">
+				<datatype>free</datatype>
+				<optioncode>yesno</optioncode>
+				<defaultvalue>yes</defaultvalue>
+			</setting>
+			<setting varname="reg_gallery_enable_cache" displayorder="10">
+				<datatype>free</datatype>
+				<optioncode>yesno</optioncode>
+				<defaultvalue>yes</defaultvalue>
+			</setting>
+			<setting varname="reg_gallery_images_per_page" displayorder="50">
+				<datatype>posint</datatype>
+				<defaultvalue>35</defaultvalue>
+			</setting>
+			<setting varname="reg_gallery_image_serving" displayorder="70">
+				<datatype>free</datatype>
+				<optioncode>select:piped
+script|Script
+file_system|File System
+cdn|CDN</optioncode>
+				<defaultvalue>file_system</defaultvalue>
+			</setting>
+			<setting varname="reg_gallery_use_cdn" displayorder="80">
+				<datatype>free</datatype>
+				<optioncode>textarea</optioncode>
+			</setting>
+		</settinggroup>
+	</options>
+	<helptopics>
+	</helptopics>
+	<cronentries>
+	</cronentries>
+	<faqentries>
+	</faqentries>
+	<navigation>
+	</navigation>
+</product>
